@@ -1,0 +1,73 @@
+Сценарий для Shorts: "Почему нельзя доверять equals и hashCode?"
+
+[Интро — 3 секунды]
+
+[На экране крупный текст]: "equals и hashCode могут сломать твой код!"
+
+[Ты говоришь]: "Не веришь? Сейчас покажу, как ошибки в этих методах рушат коллекции."
+
+[Основная часть — 30 секунд]
+
+Ошибка 1: Непереопределённый hashCode
+
+"Представь, у тебя есть класс с методом equals, но ты забыл про hashCode. Что произойдёт?"
+
+[На экране]:
+
+class Person {
+    String name;
+
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof Person && ((Person) o).name.equals(name);
+    }
+}
+HashSet<Person> set = new HashSet<>();
+set.add(new Person("Alice"));
+System.out.println(set.contains(new Person("Alice"))); // false
+
+"HashSet не найдёт элемент, потому что hashCode не переопределён!"
+
+Ошибка 2: Изменяемые поля в hashCode
+
+"Теперь добавим корректный hashCode, но сделаем поле изменяемым."
+
+[На экране]:
+
+class Person {
+    String name;
+
+    @Override
+    public int hashCode() {
+        return name.hashCode();
+    }
+}
+Person p = new Person("Alice");
+set.add(p);
+p.name = "Bob";
+System.out.println(set.contains(p)); // false
+
+"Менять поля, используемые в hashCode, нельзя! Элемент становится невидимым."
+
+Ошибка 3: Нарушение контракта equals/hashCode
+
+"Если два объекта равны через equals, их hashCode должен совпадать."
+
+[На экране]:
+
+@Override
+public boolean equals(Object o) {
+    return true; // Ой...
+}
+@Override
+public int hashCode() {
+    return super.hashCode();
+}
+
+"Такой код сломает любые коллекции, которые используют хэширование!"
+
+[Заключение — 7 секунд]
+
+"equals и hashCode — это не шутка. Проверь свой код, чтобы избежать проблем!"
+
+[На экране текст]: "Ставь лайк и подпишись, если хочешь больше полезных советов по Java!"
